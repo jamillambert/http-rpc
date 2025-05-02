@@ -1,14 +1,10 @@
-#![cfg_attr(not(feature = "std"))]
-#![allow(unused_imports)]
-
 #[cfg(not(feature = "std"))]
 extern crate alloc;
 
 #[cfg(not(feature = "std"))]
 use alloc::{boxed::Box, string::String, vec::Vec};
 
-use core::{fmt, marker::PhantomData};
-use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use serde::{de::DeserializeOwned, Serialize};
 
 mod error;
 pub use error::Error;
@@ -73,58 +69,3 @@ pub trait RpcClientFactory {
 
 #[cfg(feature = "wasm")]
 pub use wasm::{WasmTransport, WasmClientFactory};
-
-#[cfg(feature = "std")]
-pub use std_transport::{StdTransport, StdClientFactory};
-
-// Example usage for users of the library
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use serde::{Deserialize, Serialize};
-
-    // Example RPC method
-    struct GetUserMethod;
-
-    impl RpcMethod for GetUserMethod {
-        type Request = GetUserRequest;
-        type Response = GetUserResponse;
-
-        fn path() -> &'static str {
-            "/api/users"
-        }
-    }
-
-    #[derive(Serialize)]
-    struct GetUserRequest {
-        id: u64,
-    }
-
-    #[derive(Deserialize)]
-    struct GetUserResponse {
-        id: u64,
-        name: String,
-        email: String,
-    }
-
-    #[test]
-    #[ignore] // This is just an example, not an actual test
-    fn example_usage() {
-        // Create a transport based on the environment
-        #[cfg(feature = "std")]
-        let transport = StdClientFactory::create_transport("https://api.example.com");
-
-        #[cfg(feature = "wasm")]
-        let transport = WasmClientFactory::create_transport("https://api.example.com");
-
-        // Create a client with the transport
-        let client = RpcClient::new(transport);
-
-        // Make an RPC call
-        let request = GetUserRequest { id: 123 };
-        let response = client.call::<GetUserMethod>(request).unwrap();
-
-        // Use the response
-        println!("User: {} ({})", response.name, response.email);
-    }
-}
