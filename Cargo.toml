@@ -8,7 +8,6 @@ categories = ["no-std", "wasm", "web-programming"]
 [dependencies]
 serde = { version = "1.0", default-features = false, features = ["derive"] }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
-http = { version = "0.2", default-features = false }
 alloc = { version = "1.0.0", package = "rustc-std-workspace-alloc", optional = true }
 wasm-bindgen = { version = "0.2", optional = true }
 js-sys = { version = "0.3", optional = true }
@@ -23,6 +22,6 @@ web-sys = { version = "0.3", optional = true, features = [
 
 [features]
 default = ["std"]
-std = ["serde/std", "serde_json/std", "http/std"]
+std = ["serde/std", "serde_json/std"]
 wasm = ["wasm-bindgen", "js-sys", "web-sys"]
 alloc = ["dep:alloc"]
